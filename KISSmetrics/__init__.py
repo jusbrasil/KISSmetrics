@@ -88,12 +88,15 @@ class KM(object):
 
         if update:
             data['_p'] = self._id
-
+        
+        encoded_data = urllib.urlencode(data)
         try:
             connection = httplib.HTTPConnection(self._host, timeout=self._http_timeout)
-            connection.request('GET', '/%s?%s' % (type, urllib.urlencode(data)))
+            connection.request('GET', '/%s?%s' % (type, encoded_data))
             r = connection.getresponse()
-        except:
-            self.logm("Could not transmit to " + self._host)
+        except Exception as e:
+            self.logm("Could not transmit the data: '%s' to host: %s\nError: %s\n" % (
+                encoded_data, self._host, e
+            ))
         finally:
             connection.close()
